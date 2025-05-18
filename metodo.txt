@@ -1,0 +1,6 @@
+1. Foi feito scroll na página com os comentários até o final, até que todos os comentários fossem carregados. Pois utilizar um scraper ou um bot, poderíamos ser bloqueados pelo facebook. Como não são muitos comentários, o processo manual foi rápido, alguns minutos.
+2. Após isso, foi feito um script para clicar nos botões "more" dos comentários, para carregar os comentários ocultos. O script foi feito para rodar no browser, e está em ./scripts/browser_click_more.js
+3. Após isso, foi feito uma cópia do HTML da página, e o arquivo foi salvo em ./html/html-comentarios.html.
+4. Após isso, foi feito um script, em javascript, em ./script.js, para extrair os comentários do html e salvar em csv, tsv e json.
+5. O script leva em conta o build atual do instagram, isso quer dizer que o script pode nao funcionar para futuras versoes do instagram. Exemplo:   const containerComentarios = document.querySelectorAll('.xurb0ha');
+O query selector foi feito para pegar os comentários, e o nome da classe pode mudar em futuras versões do instagram. O mesmo vale para os outros query selectors.
