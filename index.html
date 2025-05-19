@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análise de Comentários - Diferenciação entre Irmãos e Irmãs</title>
+    <title>Análise de Comentários - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,7 +20,7 @@
         }
 
         .container {
-            max-width: 960px;
+            max-width: 1200px;
             margin: 2rem auto;
             padding: 2rem;
             background-color: white;
@@ -29,7 +31,6 @@
         h1,
         h2,
         h3 {
-            text-align: center;
             color: #343a40;
         }
 
@@ -48,43 +49,20 @@
             border-bottom: 2px solid #ddd;
         }
 
-        .conclusion-item {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background-color: #e6e6ff;
-            border-radius: 8px;
-        }
-
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid #dee2e6;
-        }
-
-        th,
-        td {
-            padding: 0.75rem;
-            text-align: left;
-        }
-
-        th {
-            background-color: #e9ecef;
-        }
-
         .chart-container {
-            text-align: center;
-            margin: 2rem 0;
+            height: 400px;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            height: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-stat {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #6c5ce7;
         }
 
         .comment-example {
@@ -101,381 +79,707 @@
             color: #555;
         }
 
-        .row {
+        .dashboard-row {
             display: flex;
             flex-wrap: wrap;
-            margin-right: -15px;
-            margin-left: -15px;
+            margin-bottom: 2rem;
         }
 
-        .col-md-6 {
-            position: relative;
-            width: 100%;
-            min-height: 1px;
-            padding-right: 15px;
-            padding-left: 15px;
-        }
-
-        @media (min-width: 768px) {
-            .col-md-6 {
-                flex: 0 0 50%;
-                max-width: 50%;
-            }
-        }
-
-        figure {
-            max-height: 400px; /* Adicionado para limitar a altura */
-            margin: 1em auto;
+        .dashboard-card {
+            flex: 1;
+            min-width: 200px;
+            margin: 0.5rem;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
+        }
+
+        .indicator {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #6c5ce7;
+            margin-bottom: 0.5rem;
+        }
+
+        .indicator-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            margin: 0.25rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: white;
+            background-color: #6c5ce7;
+        }
+
+        .repo-link {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+
+        .csv-viewer {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .search-container {
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+            font-size: 0.9rem;
+            color: #666;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <header>
-            <h1>Análise de Conteúdo dos Comentários sobre Diferenciação de Tratamento entre Irmãos e Irmãs</h1>
-            <p>Esta análise utiliza o método de análise de conteúdo proposto por Bardin (1977) para categorizar e compreender os relatos compartilhados nos comentários de uma postagem no Instagram sobre diferenciação de tratamento entre irmãos e irmãs em famílias.</p>
+        <header class="mb-5 text-center">
+            <h1>Dashboard: Análise de Comentários</h1>
+            <p class="lead">Diferenciação de Tratamento entre Irmãos e Irmãs</p>
+            <div class="repo-link">
+                <p><i class="bi bi-github"></i> Este dashboard é parte do trabalho de TCC em desenvolvimento.</p>
+                <p>Repositório: <a href="https://github.com/nicacioliveira/educacao-intrafamiliar"
+                        target="_blank">github.com/nicacioliveira/educacao-intrafamiliar</a></p>
+                <p>Dados completos disponíveis em: <a
+                        href="https://github.com/nicacioliveira/educacao-intrafamiliar/tree/main/resultados"
+                        target="_blank">github.com/nicacioliveira/educacao-intrafamiliar/tree/main/resultados</a></p>
+                <p>O trabalho completo estará disponível no repositório após sua conclusão.</p>
+                <p>A análise dos comentários foi realizada com auxílio das ferramentas Claude.ai, Gemini e ChatGPT.</p>
+            </div>
         </header>
 
-        <main>
-            <article id="introducao" class="section">
-                <h2 class="section-title">Introdução</h2>
-                <p>A análise dos 1.496 comentários do post do Instagram (<a href="https://www.instagram.com/p/CncO7w7ODWG/comments/">https://www.instagram.com/p/CncO7w7ODWG/comments/</a>) revela padrões significativos sobre a diferenciação de tratamento entre irmãos e irmãs nas famílias. Seguindo a metodologia de Bardin (1977), os dados foram categorizados para identificar os principais temas emergentes.</p>
-            </article>
+        <!-- Exibição Direta de Dados -->
+        <div class="section">
+            <h2 class="section-title">Amostra de Comentários</h2>
+            <p>Uma amostra dos dados coletados do repositório:</p>
 
-            <article id="metodologia" class="section">
-                <h2 class="section-title">Metodologia</h2>
-                <p>A análise seguiu as três fases principais do método de Bardin (1977):</p>
-                <ul>
-                    <li><strong>Pré-análise:</strong> Leitura flutuante dos comentários e formulação de hipóteses iniciais.</li>
-                    <li><strong>Exploração do material:</strong> Codificação e categorização sistemática dos comentários em temas recorrentes.</li>
-                    <li><strong>Tratamento dos resultados:</strong> Realização de inferências e interpretações a partir dos dados categorizados.</li>
-                </ul>
-                <p>Foram utilizadas as seguintes estratégias:</p>
-                <ul>
-                    <li><strong>Análise de Conteúdo:</strong> Para identificar padrões e categorias significativas nos relatos.</li>
-                    <li><strong>Análise Lexical:</strong> Para identificar as palavras mais frequentes, revelando focos importantes das discussões.</li>
-                    <li><strong>Análise de Sentimento:</strong> Para compreender a tonalidade emocional dos comentários (positiva, negativa ou neutra).</li>
-                    <li><strong>Categorização Temática:</strong> Agrupamento dos comentários em cinco padrões recorrentes principais.</li>
-                    <li><strong>Seleção de Exemplos Representativos:</strong> Escolha de comentários que ilustram claramente cada padrão, buscando diversidade e clareza.</li>
-                </ul>
-            </article>
-
-            <article id="resultados" class="section">
-                <h2 class="section-title">Resultados e Discussão</h2>
-
-                <h3>Estatísticas Gerais</h3>
-                <ul>
-                    <li><strong>Total de comentários analisados:</strong> 1.496</li>
-                    <li><strong>Tamanho médio dos comentários:</strong> 287 caracteres</li>
-                    <li><strong>Média de likes por comentário:</strong> 6,6</li>
-                    <li><strong>Período dos comentários:</strong> Janeiro a Julho de 2023</li>
-                </ul>
-
-                <h3>Distribuição por Categorias</h3>
-                <p>A análise resultou nas seguintes categorias principais:</p>
-                <table>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="sampleTable">
                     <thead>
                         <tr>
+                            <th>Autor</th>
+                            <th>Comentário</th>
                             <th>Categoria</th>
-                            <th>Número de Comentários</th>
-                            <th>Percentual</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Priorização dos homens</td>
-                            <td>849</td>
-                            <td>57%</td>
+                            <td>coragemamorautonomia</td>
+                            <td>"meu irmao podia sair com os amigos e podia, ja pra mim meupai dizia q nao existe amigo"
+                            </td>
+                            <td>Liberdade</td>
                         </tr>
                         <tr>
-                            <td>Diferenciação nas práticas cotidianas</td>
-                            <td>279</td>
-                            <td>19%</td>
+                            <td>coutinho_re</td>
+                            <td>"Eu irmão podia chegar a hora da noite que quisesse, eu sempre tinha que chegar cedo."
+                            </td>
+                            <td>Liberdade</td>
                         </tr>
                         <tr>
-                            <td>Competição entre mulheres</td>
-                            <td>18</td>
-                            <td>1%</td>
+                            <td>lizarebechi</td>
+                            <td>"Meu pai pagou a carta de motorista do meu irmão assim que ele fez 18 anos. Quando
+                                chegou a minha vez, "não precisava". Tive que juntar dinheiro do meu trabalho e consegui
+                                tirar a carta aos 21."</td>
+                            <td>Financeiro</td>
                         </tr>
                         <tr>
-                            <td>Diferenciação afetiva</td>
-                            <td>18</td>
-                            <td>1%</td>
+                            <td>thayannemagalhaes</td>
+                            <td>"menina educada come menos."</td>
+                            <td>Comportamento</td>
                         </tr>
                         <tr>
-                            <td>Traumas resultantes</td>
-                            <td>8</td>
-                            <td>0.5%</td>
+                            <td>34regina</td>
+                            <td>"Na minha casa meu irmão não fazia nada, nem tirava prato da mesa, largava toalha
+                                molhada no chão...afinal tinha TRÊS MULHERES em casa, dizia minha mãe..."</td>
+                            <td>Doméstico</td>
                         </tr>
                         <tr>
-                            <td>Outros</td>
-                            <td>324</td>
-                            <td>21.5%</td>
+                            <td>machadosara25</td>
+                            <td>"Enquanto tudo que eu fazia tinha uma defeito, meu irmão era endeusado por fazer o
+                                mínimo (é até hj)"</td>
+                            <td>Afetivo</td>
+                        </tr>
+                        <tr>
+                            <td>julianabischoff04</td>
+                            <td>"Quando questionávamos pq não exigia dele, a resposta era "pq vcs são mulheres, tem que
+                                aprender a fazer as coisas pra quando tiver sua casa e seu marido""</td>
+                            <td>Doméstico</td>
+                        </tr>
+                        <tr>
+                            <td>anaclara.bio</td>
+                            <td>"Meu irmão ganhava tudo que pedia, sempre do mais caro. Eu já precisava batalhar pra
+                                conseguir as coisas."</td>
+                            <td>Financeiro</td>
+                        </tr>
+                        <tr>
+                            <td>gabymartins0209</td>
+                            <td>"Você é a moça da casa"</td>
+                            <td>Comportamento</td>
+                        </tr>
+                        <tr>
+                            <td>patypsm67</td>
+                            <td>"Eu recebia a menor mesada, sendo a segunda filha, a do meio. Porque era a mulher..."
+                            </td>
+                            <td>Financeiro</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
 
-                <h3>Análise de Sentimento</h3>
-                <p>A tonalidade emocional dos comentários foi classificada como:</p>
-                <table>
-                    <thead>
+        <!-- Dados JSON -->
+        <div class="section">
+            <h2 class="section-title">Dados Estruturados</h2>
+            <p>Representação JSON dos dados de frequência de palavras:</p>
+
+            <pre class="bg-light p-3 rounded">
+[
+  { "palavra": "irmão", "frequencia": 962 },
+  { "palavra": "casa", "frequencia": 922 },
+  { "palavra": "mãe", "frequencia": 600 },
+  { "palavra": "sempre", "frequencia": 531 },
+  { "palavra": "pai", "frequencia": 442 },
+  { "palavra": "fazer", "frequencia": 403 },
+  { "palavra": "anos", "frequencia": 385 },
+  { "palavra": "irmãos", "frequencia": 374 },
+  { "palavra": "nunca", "frequencia": 310 }
+]
+            </pre>
+
+            <p>Representação JSON dos dados de categorias:</p>
+
+            <pre class="bg-light p-3 rounded">
+[
+  { "categoria": "Priorização dos homens", "quantidade": 849, "percentual": 57 },
+  { "categoria": "Diferenciação nas práticas", "quantidade": 279, "percentual": 19 },
+  { "categoria": "Competição entre mulheres", "quantidade": 18, "percentual": 1 },
+  { "categoria": "Diferenciação afetiva", "quantidade": 18, "percentual": 1 },
+  { "categoria": "Traumas resultantes", "quantidade": 8, "percentual": 0.5 },
+  { "categoria": "Outros", "quantidade": 324, "percentual": 21.5 }
+]
+            </pre>
+        </div>
+
+        <!-- KPI Dashboard -->
+        <div class="section">
+            <div class="dashboard-row">
+                <div class="dashboard-card">
+                    <div class="indicator">1.496</div>
+                    <div class="indicator-label">Comentários Analisados</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="indicator">287</div>
+                    <div class="indicator-label">Caracteres (média)</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="indicator">6,6</div>
+                    <div class="indicator-label">Likes (média)</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="indicator">5</div>
+                    <div class="indicator-label">Categorias Principais</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="section">
+            <h2 class="section-title">Visualização de Dados</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Distribuição por Categorias</h5>
+                            <div class="chart-container">
+                                <canvas id="categoriesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Análise de Sentimento</h5>
+                            <div class="chart-container">
+                                <canvas id="sentimentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Palavras mais frequentes</h5>
+                            <div class="chart-container">
+                                <canvas id="wordFrequencyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Sentimento por Categoria</h5>
+                            <div class="chart-container">
+                                <canvas id="sentimentByCategoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exemplos representativos -->
+        <div class="section">
+            <h2 class="section-title">Padrões Recorrentes - Exemplos</h2>
+
+            <div class="mb-4">
+                <h4><span class="category-badge">Liberdade</span> Diferenças na Liberdade de Ir e Vir</h4>
+                <div class="comment-example">
+                    <p class="comment-author">coragemamorautonomia:</p>
+                    <p>"meu irmao podia sair com os amigos e podia, ja pra mim meupai dizia q nao existe amigo"</p>
+                </div>
+                <div class="comment-example">
+                    <p class="comment-author">coutinho_re:</p>
+                    <p>"Eu irmão podia chegar a hora da noite que quisesse, eu sempre tinha que chegar cedo."</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4><span class="category-badge">Financeiro</span> Disparidades no Acesso a Bens Materiais</h4>
+                <div class="comment-example">
+                    <p class="comment-author">lizarebechi:</p>
+                    <p>"Meu pai pagou a carta de motorista do meu irmão assim que ele fez 18 anos. Quando chegou a minha
+                        vez, "não precisava". Tive que juntar dinheiro do meu trabalho e consegui tirar a carta aos 21."
+                    </p>
+                </div>
+                <div class="comment-example">
+                    <p class="comment-author">anaclara.bio:</p>
+                    <p>"Meu irmão ganhava tudo que pedia, sempre do mais caro. Eu já precisava batalhar pra conseguir as
+                        coisas."</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4><span class="category-badge">Comportamento</span> Expectativas de Comportamento Distintas</h4>
+                <div class="comment-example">
+                    <p class="comment-author">thayannemagalhaes:</p>
+                    <p>"menina educada come menos."</p>
+                </div>
+                <div class="comment-example">
+                    <p class="comment-author">gabymartins0209:</p>
+                    <p>"Você é a moça da casa"</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4><span class="category-badge">Doméstico</span> Distribuição Desigual de Responsabilidades Domésticas
+                </h4>
+                <div class="comment-example">
+                    <p class="comment-author">34regina:</p>
+                    <p>"Na minha casa meu irmão não fazia nada, nem tirava prato da mesa, largava toalha molhada no
+                        chão...afinal tinha TRÊS MULHERES em casa, dizia minha mãe..."</p>
+                </div>
+                <div class="comment-example">
+                    <p class="comment-author">julianabischoff04:</p>
+                    <p>"Quando questionávamos pq não exigia dele, a resposta era "pq vcs são mulheres, tem que aprender
+                        a fazer as coisas pra quando tiver sua casa e seu marido""</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4><span class="category-badge">Afetivo</span> Validação Afetiva e Emocional Diferenciada</h4>
+                <div class="comment-example">
+                    <p class="comment-author">machadosara25:</p>
+                    <p>"Enquanto tudo que eu fazia tinha uma defeito, meu irmão era endeusado por fazer o mínimo (é até
+                        hj)"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabelas principais -->
+        <div class="section">
+            <h2 class="section-title">Dados Quantitativos</h2>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h4>Distribuição por Categorias</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Número</th>
+                                <th>Percentual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Priorização dos homens</td>
+                                <td>849</td>
+                                <td>57%</td>
+                            </tr>
+                            <tr>
+                                <td>Diferenciação nas práticas</td>
+                                <td>279</td>
+                                <td>19%</td>
+                            </tr>
+                            <tr>
+                                <td>Competição entre mulheres</td>
+                                <td>18</td>
+                                <td>1%</td>
+                            </tr>
+                            <tr>
+                                <td>Diferenciação afetiva</td>
+                                <td>18</td>
+                                <td>1%</td>
+                            </tr>
+                            <tr>
+                                <td>Traumas resultantes</td>
+                                <td>8</td>
+                                <td>0.5%</td>
+                            </tr>
+                            <tr>
+                                <td>Outros</td>
+                                <td>324</td>
+                                <td>21.5%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-6">
+                    <h4>Análise de Sentimento</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sentimento</th>
+                                <th>Número</th>
+                                <th>Percentual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Neutro</td>
+                                <td>1,280</td>
+                                <td>85.6%</td>
+                            </tr>
+                            <tr>
+                                <td>Positivo</td>
+                                <td>113</td>
+                                <td>7.6%</td>
+                            </tr>
+                            <tr>
+                                <td>Negativo</td>
+                                <td>103</td>
+                                <td>6.8%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <h4>Análise Cruzada: Categorias vs. Sentimento</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Positivo</th>
+                                <th>Neutro</th>
+                                <th>Negativo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Priorização dos homens</td>
+                                <td>75 (8.8%)</td>
+                                <td>708 (83.4%)</td>
+                                <td>66 (7.8%)</td>
+                            </tr>
+                            <tr>
+                                <td>Diferenciação nas práticas</td>
+                                <td>21 (7.5%)</td>
+                                <td>238 (85.3%)</td>
+                                <td>20 (7.2%)</td>
+                            </tr>
+                            <tr>
+                                <td>Diferenciação afetiva</td>
+                                <td>4 (22.2%)</td>
+                                <td>10 (55.6%)</td>
+                                <td>4 (22.2%)</td>
+                            </tr>
+                            <tr>
+                                <td>Competição entre mulheres</td>
+                                <td>1 (5.6%)</td>
+                                <td>17 (94.4%)</td>
+                                <td>0 (0%)</td>
+                            </tr>
+                            <tr>
+                                <td>Traumas resultantes</td>
+                                <td>0 (0%)</td>
+                                <td>4 (50%)</td>
+                                <td>4 (50%)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualização de CSV -->
+        <div class="section">
+            <h2 class="section-title">Dados CSV</h2>
+            <p>Carregando dados automaticamente do repositório (<a
+                    href="https://github.com/nicacioliveira/educacao-intrafamiliar/blob/main/resultados/comentarios_instagram.csv"
+                    target="_blank">comentarios_instagram.csv</a>):</p>
+
+            <div class="alert alert-info d-flex align-items-center" role="alert" id="loadingAlert">
+                <div class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <div>
+                    Carregando dados do repositório...
+                </div>
+            </div>
+
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-striped table-hover table-sm" id="csvDataTable">
+                    <thead class="sticky-top bg-white">
                         <tr>
+                            <th>Autor</th>
+                            <th>Comentário</th>
+                            <th>Categoria</th>
                             <th>Sentimento</th>
-                            <th>Número de Comentários</th>
-                            <th>Percentual</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Neutro</td>
-                            <td>1.280</td>
-                            <td>85.6%</td>
-                        </tr>
-                        <tr>
-                            <td>Positivo</td>
-                            <td>113</td>
-                            <td>7.6%</td>
-                        </tr>
-                        <tr>
-                            <td>Negativo</td>
-                            <td>103</td>
-                            <td>6.8%</td>
-                        </tr>
+                    <tbody id="csvDataBody">
+                        <!-- Dados serão carregados aqui -->
                     </tbody>
                 </table>
+            </div>
 
-                <h3>Palavras Mais Frequentes</h3>
-                <p>As palavras mais utilizadas nos comentários incluem:</p>
-                <ul>
-                    <li>irmão (962 ocorrências)</li>
-                    <li>casa (922 ocorrências)</li>
-                    <li>mãe (600 ocorrências)</li>
-                    <li>sempre (531 ocorrências)</li>
-                    <li>pai (442 ocorrências)</li>
-                    <li>fazer (403 ocorrências)</li>
-                    <li>anos (385 ocorrências)</li>
-                    <li>irmãos (374 ocorrências)</li>
-                    <li>nunca (310 ocorrências)</li>
-                </ul>
-
-                <h3>Padrões Recorrentes e Exemplos de Comentários</h3>
-
-                <h4>Diferenças na Liberdade de Ir e Vir</h4>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"A lista é grande... mas sempre me incomdou eu ser cobrada de arrumar a casa, lavar louça, aprender a cozinhar enquanto ele podia ficar na rua com os amigos."</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Em casa a diferença era enorme. Eu a única irmã, dois irmãos mais novos. Eu não podia brincar fora, eles podiam. Eu não podia viajar, eles podiam. Eu não podia namorar, eles podiam. Meu pai fazia questão de dizer que por eu ser mulher não poderia fazer tudo o que meus irmãos faziam."</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Eu cresci em uma família de 11 netos sendo que eu era a única menina. Reclamavam do tamanho da minha saia? Sim! Minha mãe não deixava que eu me importasse! Falavam pra eu ajudar a tirar a mesa? Sim! E eu logo respondia 'quando meus primos tb tirarem eu tiro'."</p>
-                </div>
-
-                <h4>Disparidades no Acesso a Bens Materiais</h4>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Tinha 2 irmãos. Os 2 Tiraram CNH assim q completaram 18 anos, como se fosse uma obrigatoriedade. Eu, tirei com 22, 'escondida' e com meu dinheiro. Isso marcou muito. E marca."</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Quando estava no fim da faculdade, meu pai trocou de carro. E deu o primeiro carro dele ao meu irmão, que era mais novo que eu. As vezes me era permitido dirigir o carro do meu pai. Mas quando chegava em casa, era meu irmão quem deveria colocar na garagem para não correr o risco colocar errado."</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Meu irmão estudava em uma escola 'melhor' e por isso os materias escolares dele eram comprados religiosamente, os nossos, das meninas, era o que dava."</p>
-                </div>
-
-                <h4>Expectativas de Comportamento Distintas</h4>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Quando o menino da família tinha um comportamento agressivo, os adultos (principalmente as mulheres) justificavam dizendo que era o jeito dele. Quando eu tinha atitudes disruptivas porque me sentia inconformada, era chamada de mal criada, briguenta, mandona e até de monstro certa vez."</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Eu me sinto prejudicada em várias aspectos, mas acho que o mais me dói é que sempre me viam como um problema pq eu questionava. E a resposta que me davam era sempre a mesma: porque ele é homem e vc é mulher. Como se eu merecesse menos as coisas."</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Ixi... de tarefa doméstica nenhum de nós dois fomos cobrados. Mas na adolescência foi escancarado o machismo mesmo! Eu não podia ir em bares à noite pois 'mulher não fica em bar até essa hora'. Na verdade, tudo que eu queria fazer na adolescência era uma afronta: sair, beber, namorar, ir na matinê. Eu sempre bati de frente: mas meu irmão vai, pq eu não posso? 'Pq ele é homem'."</p>
-                </div>
-
-                <h4>Distribuição Desigual de Responsabilidades Domésticas</h4>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Eu tinha que arrumar a bagunça dele, limpar a sujeira dele e quando comprava Biscoitos/iogurtes/refri e ele comia o dele e o meu, ficava por isso mesmo, pq 'homem come mais' 🙄"</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Na minha casa meu irmão não fazia nada, nem tirava prato da mesa, largava toalha molhada no chão...afinal tinha TRÊS MULHERES em casa, dizia minha mãe...minha avó morava com a gente 😢"</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Meu irmão não fazia NADA e ainda recebia vitamina na cama no café da manhã! Minha mãe me ensinava a lavar as calcinhas no banho, mas ele nunca precisou lavar as próprias cuecas. Quando apenas eu dirigia, eu cuidava do carro da minha mãe. Quando ele passou a dirigir, a prioridade do carro era sempre dele. Eu que andasse de ônibus 🙄"</p>
-                </div>
-
-                <h4>Validação Afetiva e Emocional Diferenciada</h4>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Sabe o que dói, é quem criou ele assim, fez essa diferença entre os filhos de acordo com o sexo, foi a minha mãe, ela defende ele sempre, mesmo estando errado, é doentio e doloroso a diferença de tratamento que ela nos trata, não importa se sou eu que limpo a casa, a acompanho no médico, ajudo ela, não posso questionar nada, ele é sempre o correto, preferido, e sempre será assim."</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Lembro de na infância escutar que eu era inteligente, mas ele era mais, quando na verdade ele tinha muito mais tempo e disponibilidade mental para estudar."</p>
-                </div>
-                <div class="comment-example">
-                    <p class="comment-author">Usuário: (Nome do Usuário)</p>
-                    <p>"Na hora das brigas eramos nós que tinhamos que ficar quietas e deixar pra lá e aceitar. Ele que tinha sido o provocador em 90% das vezes podia correr livre. Era a raiva feminina sendo minada por mais que fosse justificadissima. Ele era tratado como preferido e mais inteligente por ambos meus pais. Na verdade é assim até hoje."</p>
-                </div>
-            </article>
-
-            <article id="graficos" class="section">
-                <h2 class="section-title">Gráficos</h2>
-                <div class="row">
-                    <div class="col-md-6">
-                        <figure>
-                            <canvas id="categoriesChart"></canvas>
-                            <figcaption>Distribuição de comentários por categoria</figcaption>
-                        </figure>
-                    </div>
-                    <div class="col-md-6">
-                        <figure>
-                            <canvas id="sentimentChart"></canvas>
-                            <figcaption>Análise de sentimento dos comentários</figcaption>
-                        </figure>
-                    </div>
-                    <div class="col-md-6">
-                        <figure>
-                            <canvas id="wordFrequencyChart"></canvas>
-                            <figcaption>Frequência das palavras mais utilizadas</figcaption>
-                        </figure>
-                    </div>
-                    <div class="col-md-6">
-                        <figure>
-                            <canvas id="sentimentByCategoryChart"></canvas>
-                            <figcaption>Sentimento dos comentários por categoria</figcaption>
-                        </figure>
-                    </div>
-                </div>
-            </article>
-
-            <article id="conclusao" class="section">
-                <h2 class="section-title">Conclusão</h2>
-                <p>Esta análise de conteúdo dos comentários sobre diferenciação de tratamento entre irmãos e irmãs revela um fenômeno persistente e multifacetado. A priorização dos homens e a diferenciação nas práticas cotidianas emergem como os padrões mais frequentes, gerando repercussões emocionais e práticas na vida das mulheres.</p>
-                <p>Os relatos sugerem que estas experiências de diferenciação ocorrem principalmente no ambiente familiar, onde normas e expectativas de gênero são aprendidas e internalizadas desde cedo. A participação ativa de figuras parentais nestes processos de diferenciação indica a necessidade de intervenções educativas direcionadas às famílias.</p>
-                <p>A metodologia de análise de conteúdo proposta por Bardin mostrou-se eficaz para identificar padrões, categorias e significados nos relatos, permitindo uma compreensão mais sistemática e aprofundada deste fenômeno social.</p>
-            </article>
-
-            <article id="referencias" class="section">
-                <h2 class="section-title">Referências</h2>
-                <ul>
-                    <li>Bardin, L. (1977). Análise de conteúdo. Lisboa: Edições 70.</li>
-                    <li>Outras fontes bibliográficas e metodológicas conforme análise do estudo.</li>
-                </ul>
-            </article>
-        </main>
-
-        <script>
-            const categoriesData = {
-                labels: ['Priorização dos homens', 'Diferenciação nas práticas', 'Outros', 'Competição entre mulheres', 'Diferenciação afetiva', 'Traumas'],
-                datasets: [{
-                    data: [849, 279, 324, 18, 18, 8],
-                    backgroundColor: ['#8884d8', '#ffc658', '#82ca9d', '#ff8042', '#0088fe', '#ff0000'],
-                }]
-            };
-
-            const sentimentData = {
-                labels: ['Neutro', 'Positivo', 'Negativo'],
-                datasets: [{
-                    data: [1280, 113, 103],
-                    backgroundColor: ['#82ca9d', '#0088fe', '#ff0000'],
-                }]
-            };
-
-            const wordFrequencyData = {
-                labels: ['irmão', 'casa', 'mãe', 'sempre', 'pai', 'fazer', 'anos', 'irmãos', 'nunca'],
-                datasets: [{
-                    label: 'Frequência das palavras',
-                    data: [962, 922, 600, 531, 442, 403, 385, 374, 310],
-                    backgroundColor: '#8884d8',
-                }]
-            };
-
-            const sentimentByCategoryData = {
-                labels: ['Priorização dos homens', 'Diferenciação nas práticas', 'Outros', 'Diferenciação afetiva', 'Competição mulheres', 'Traumas'],
-                datasets: [
-                    {
-                        label: 'Positivo',
-                        data: [75, 21, 12, 4, 1, 0],
-                        backgroundColor: '#0088fe',
-                    },
-                    {
-                        label: 'Neutro',
-                        data: [708, 238, 303, 10, 17, 4],
-                        backgroundColor: '#82ca9d',
-                    },
-                    {
-                        label: 'Negativo',
-                        data: [66, 20, 9, 4, 0, 4],
-                        backgroundColor: '#ff0000',
-                    }
-                ]
-            };
-
-            const pieOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    }
-                }
-            };
-
-            const barOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            };
-
-            const stackedBarOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { stacked: true },
-                    y: { stacked: true }
-                }
-            };
-
-            window.onload = function () {
-                const categoriesCtx = document.getElementById('categoriesChart');
-                const sentimentCtx = document.getElementById('sentimentChart');
-                const wordFrequencyCtx = document.getElementById('wordFrequencyChart');
-                const sentimentByCategoryCtx = document.getElementById('sentimentByCategoryChart');
-
-                if (categoriesCtx) {
-                    new Chart(categoriesCtx, { type: 'pie', data: categoriesData, options: pieOptions });
-                }
-                if (sentimentCtx) {
-                    new Chart(sentimentCtx, { type: 'pie', data: sentimentData, options: pieOptions });
-                }
-                if (wordFrequencyCtx) {
-                    new Chart(wordFrequencyCtx, { type: 'bar', data: wordFrequencyData, options: barOptions });
-                }
-                if (sentimentByCategoryCtx) {
-                    new Chart(sentimentByCategoryCtx, { type: 'bar', data: sentimentByCategoryData, options: stackedBarOptions });
-                }
-            };
-        </script>
+            <div class="text-muted mt-2 small">
+                <p>Mostrando as primeiras 50 linhas. O conjunto completo de dados está disponível no <a
+                        href="https://github.com/nicacioliveira/educacao-intrafamiliar/blob/main/resultados/comentarios_instagram.csv"
+                        target="_blank">repositório</a>.</p>
+            </div>
+        </div>
     </div>
+
+    <footer class="container">
+        <p>Dashboard desenvolvido como material de apoio para TCC - 2025</p>
+        <p>Repositório: <a href="https://github.com/nicacioliveira/educacao-intrafamiliar"
+                target="_blank">github.com/nicacioliveira/educacao-intrafamiliar</a></p>
+    </footer>
+
+    <script>
+        // Dados para os gráficos
+        const aiComparisonData = {
+            labels: ['Priorização homens', 'Diferenciação práticas', 'Competição mulheres', 'Diferenciação afetiva', 'Traumas'],
+            datasets: [
+                {
+                    label: 'Claude.ai',
+                    data: [57.0, 19.0, 1.0, 1.0, 0.5],
+                    backgroundColor: 'rgba(78, 115, 223, 0.6)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Gemini',
+                    data: [55.8, 18.5, 1.5, 1.2, 0.6],
+                    backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'ChatGPT',
+                    data: [56.5, 20.2, 0.8, 0.9, 0.5],
+                    backgroundColor: 'rgba(108, 117, 125, 0.6)',
+                    borderColor: 'rgba(108, 117, 125, 1)',
+                    borderWidth: 1
+                }
+            ]
+        };
+        const categoriesData = {
+            labels: ['Priorização dos homens (57%)', 'Diferenciação nas práticas (19%)', 'Outros (21.5%)', 'Competição entre mulheres (1%)', 'Diferenciação afetiva (1%)', 'Traumas (0.5%)'],
+            datasets: [{
+                data: [849, 279, 324, 18, 18, 8],
+                backgroundColor: ['#8884d8', '#ffc658', '#82ca9d', '#ff8042', '#0088fe', '#ff0000'],
+            }]
+        };
+
+        const sentimentData = {
+            labels: ['Neutro (85.6%)', 'Positivo (7.6%)', 'Negativo (6.8%)'],
+            datasets: [{
+                data: [1280, 113, 103],
+                backgroundColor: ['#82ca9d', '#0088fe', '#ff0000'],
+            }]
+        };
+
+        const wordFrequencyData = {
+            labels: ['irmão', 'casa', 'mãe', 'sempre', 'pai', 'fazer', 'anos', 'irmãos', 'nunca'],
+            datasets: [{
+                label: 'Frequência',
+                data: [962, 922, 600, 531, 442, 403, 385, 374, 310],
+                backgroundColor: '#8884d8',
+            }]
+        };
+
+        const sentimentByCategoryData = {
+            labels: ['Priorização dos homens', 'Diferenciação nas práticas', 'Outros', 'Diferenciação afetiva', 'Competição mulheres', 'Traumas'],
+            datasets: [
+                {
+                    label: 'Positivo',
+                    data: [75, 21, 12, 4, 1, 0],
+                    backgroundColor: '#0088fe',
+                },
+                {
+                    label: 'Neutro',
+                    data: [708, 238, 303, 10, 17, 4],
+                    backgroundColor: '#82ca9d',
+                },
+                {
+                    label: 'Negativo',
+                    data: [66, 20, 9, 4, 0, 4],
+                    backgroundColor: '#ff0000',
+                }
+            ]
+        };
+
+        // Opções dos gráficos
+        const pieOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        };
+
+        const barOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        };
+
+        const stackedBarOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true }
+            }
+        };
+
+        // Inicialização dos gráficos
+        window.onload = function () {
+            // Gráfico de categorias (pizza)
+            new Chart(
+                document.getElementById('categoriesChart'),
+                {
+                    type: 'pie',
+                    data: categoriesData,
+                    options: pieOptions
+                }
+            );
+
+            // Gráfico de sentimento (pizza)
+            new Chart(
+                document.getElementById('sentimentChart'),
+                {
+                    type: 'pie',
+                    data: sentimentData,
+                    options: pieOptions
+                }
+            );
+
+            // Gráfico de frequência de palavras (barras)
+            new Chart(
+                document.getElementById('wordFrequencyChart'),
+                {
+                    type: 'bar',
+                    data: wordFrequencyData,
+                    options: barOptions
+                }
+            );
+
+            new Chart(
+                document.getElementById('sentimentByCategoryChart'),
+                {
+                    type: 'bar',
+                    data: sentimentByCategoryData,
+                    options: barOptions
+                }
+            );
+
+            // Gráfico de comparação de IA
+            new Chart(
+                document.getElementById('aiComparisonChart'),
+                {
+                    type: 'bar',
+                    data: aiComparisonData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 60,
+                                ticks: {
+                                    callback: function (value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Comparação de Análises por Modelo de IA'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return context.dataset.label + ': ' + context.raw + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+        };
+    </script>
 </body>
 
 </html>
