@@ -1,0 +1,27 @@
+{
+  "corpus": {
+    "total_original": 1496,
+    "total_analisado": 1219,
+    "taxa_aproveitamento": 81.48,
+    "media_palavras": 61.48
+  },
+  "categorizacao": {
+    "categorias_identificadas": 7,
+    "categorias_ativas": 7,
+    "cobertura": 77.77,
+    "categoria_principal": "diferenciacao_domestica",
+    "freq_principal": 772,
+    "exclusao_mutua": 36.9
+  },
+  "processamento": {
+    "features_dfm": 6092,
+    "sparsity": 0.9957,
+    "k_topicos": 6
+  },
+  "sentimentos": {
+    "prop_negativo": 18.46,
+    "prop_neutro": 75.88,
+    "prop_positivo": 5.66,
+    "score_medio": -0.069
+  }
+}

@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Análise de Bardin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .dashboard { 
+            max-width: 1200px; margin: 0 auto; background: white;
+            border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        .metrics { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; padding: 30px; background: #f8f9fa;
+        }
+        .metric { 
+            background: white; padding: 25px; border-radius: 10px; 
+            text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        .metric:hover { transform: translateY(-5px); }
+        .metric-value { font-size: 2.5em; font-weight: bold; margin-bottom: 10px; }
+        .metric-label { 
+            color: #666; font-size: 0.9em; text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .success { color: #27ae60; }
+        .warning { color: #f39c12; }
+        .footer { 
+            background: #2c3e50; color: white; padding: 20px; text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>📊 Análise de Conteúdo de Bardin</h1>
+            <p>Diferenciação Familiar por Gênero em Comentários do Instagram</p>
+        </div>
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-value success">1219</div>
+                <div class="metric-label">Documentos Analisados</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">81.5%</div>
+                <div class="metric-label">Taxa de Aproveitamento</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value success">6</div>
+                <div class="metric-label">Categorias Ativas</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">77.8%</div>
+                <div class="metric-label">Cobertura Categorização</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value warning">18.5%</div>
+                <div class="metric-label">Sentimentos Negativos</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">6092</div>
+                <div class="metric-label">Features Processadas</div>
+            </div>
+        </div>
+        <div class="footer">
+            <div>Análise gerada em: 23/07/2025 às 23:26</div>
+        </div>
+    </div>
+</body>
+</html>
