@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCC - Heloisa Diniz Ferreira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .responsive-iframe-container {
+            position: relative;
+            overflow: hidden;
+            padding-top: 100%; 
+        }
+        .responsive-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <!-- Cabeçalho -->
+        <header class="text-center my-8 md:my-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">“Costume de Casa Vai à Praça”: A Reprodução de Estereótipos e do Sexismo no Cotidiano Familiar</h1>
+            <p class="mt-4 text-lg text-gray-600">Um estudo sobre a desigualdade de género na educação intrafamiliar</p>
+            <p class="mt-2 text-md text-gray-500">por <strong>Heloisa Diniz Ferreira</strong></p>
+            <p class="text-sm text-gray-400">Universidade Federal de Campina Grande (UFCG) - 2025</p>
+        </header>
+
+        <!-- Seção de Resumo -->
+        <section class="bg-white p-6 rounded-lg shadow-sm mb-10">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">Resumo</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Este trabalho objetivou analisar os sentidos atribuídos por mulheres às experiências de preterição e desigualdade de género vividas na infância e adolescência no âmbito familiar. A partir da coleta e análise de 1.215 comentários de uma postagem no Instagram, utilizou-se uma metodologia híbrida que combina a Análise de Conteúdo de Bardin com técnicas computacionais de Processamento de Linguagem Natural, como a Modelagem de Tópicos (LDA). A análise revelou quatro categorias temáticas centrais: (1) Divisão desigual do trabalho doméstico, (2) Desigualdade financeira no suporte familiar, (3) Contrastes na liberdade e autonomia, e (4) Percepção crítica e resistência. Os resultados evidenciam a perpetuação de assimetrias de género no espaço intrafamiliar, validando os padrões tanto pela análise qualitativa quanto pela quantitativa.
+            </p>
+        </section>
+
+        <!-- NOVA SEÇÃO: Metodologia -->
+        <section class="bg-white p-6 rounded-lg shadow-sm mb-10">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">Metodologia em Resumo</h2>
+            <div class="space-y-4 text-gray-700 leading-relaxed">
+                <div>
+                    <h3 class="font-bold">Coleta e Filtragem de Dados</h3>
+                    <p>Os dados foram coletados de forma semi-manual a partir de uma postagem pública no Instagram. Após a extração de 1.496 comentários, foi aplicado um filtro para garantir a relevância dos relatos: foram mantidos apenas comentários com mais de 15 caracteres e que continham palavras-chave relacionadas ao contexto familiar. O corpus final para análise foi consolidado em **1.215 comentários**.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold">Análise Híbrida</h3>
+                    <p>Utilizou-se uma abordagem que combina duas técnicas:
+                        <ul class="list-disc list-inside mt-2 ml-4">
+                            <li><strong>Análise de Conteúdo (Bardin):</strong> Definição de 4 categorias temáticas a priori, com base no referencial teórico, para classificar os comentários.</li>
+                            <li><strong>Modelagem de Tópicos (LDA):</strong> Uso de um algoritmo não supervisionado para identificar 4 tópicos estatísticos emergentes do texto, servindo como validação para as categorias manuais.</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Resultados Visuais -->
+        <section>
+            <h2 class="text-2xl font-bold mb-6 text-center">Resultados Visuais da Análise</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h3 class="font-bold text-lg mb-2 text-center">Frequência das Categorias (Bardin)</h3>
+                    <img src="./rproject/resultados/graficos/01_frequencia_categorias_bardin.png" alt="Gráfico de Frequência das Categorias (Bardin)" class="rounded-md w-full">
+                    <p class="text-sm text-gray-600 mt-2">A divisão de tarefas domésticas é a desigualdade mais relatada, correspondendo a 44.4% das ocorrências.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h3 class="font-bold text-lg mb-2 text-center">Validação Metodológica (Bardin vs. LDA)</h3>
+                    <img src="./rproject/resultados/graficos/09_comparativo_bardin_lda.png" alt="Gráfico Comparativo Bardin vs. LDA" class="rounded-md w-full">
+                    <p class="text-sm text-gray-600 mt-2">A análise automática (vermelho) valida a distribuição encontrada na análise manual (azul), reforçando a robustez dos temas.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h3 class="font-bold text-lg mb-2 text-center">Expressões Comuns por Categoria</h3>
+                    <img src="./rproject/resultados/graficos/04_bigramas_por_categoria.png" alt="Gráfico de Bigramas por Categoria" class="rounded-md w-full">
+                    <p class="text-sm text-gray-600 mt-2">Bigramas como "podia sair" e "tarefas domésticas" revelam as narrativas centrais de cada tema.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h3 class="font-bold text-lg mb-2 text-center">Rede de Palavras-Chave</h3>
+                    <img src="./rproject/resultados/graficos/06_rede_coocorrencia.png" alt="Gráfico de Rede de Co-ocorrência" class="rounded-md w-full">
+                    <p class="text-sm text-gray-600 mt-2">A palavra "irmão" funciona como o nó central que conecta as diferentes esferas da desigualdade percebida.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow-sm md:col-span-2">
+                    <h3 class="font-bold text-lg mb-2 text-center">Nuvem de Palavras Interativa (Categoria Principal)</h3>
+                    <div class="responsive-iframe-container rounded-md overflow-hidden">
+                        <iframe class="responsive-iframe" src="./rproject/resultados/graficos/05_wordcloud_bardin_principal.html" title="Nuvem de Palavras Interativa"></iframe>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">Visualização das palavras mais frequentes na categoria "Divisão Desigual do Trabalho Doméstico". Passe o rato sobre as palavras para ver a frequência.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Seção de Artefatos -->
+        <section class="bg-white p-6 rounded-lg shadow-sm mt-10">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">Artefactos do Projeto</h2>
+            <div class="flex flex-col md:flex-row gap-4">
+                <a href="https://github.com/nicacioliveira/educacao-intrafamiliar" target="_blank" class="flex-1 bg-gray-800 text-white text-center font-bold py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors">Ver Repositório Completo no GitHub</a>
+                <a href="./rproject/bardin_analysis.R" target="_blank" class="flex-1 bg-blue-600 text-white text-center font-bold py-3 px-4 rounded-lg hover:bg-blue-500 transition-colors">Ver Script de Análise (R)</a>
+                <a href="./resultados/comentarios_instagram.csv" target="_blank" class="flex-1 bg-green-600 text-white text-center font-bold py-3 px-4 rounded-lg hover:bg-green-500 transition-colors">Ver Dados Brutos (.csv)</a>
+            </div>
+        </section>
+
+        <!-- Rodapé -->
+        <footer class="text-center mt-12 mb-6">
+            <p class="text-gray-500">&copy; 2025 - Heloisa Diniz Ferreira</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
