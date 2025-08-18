@@ -1,5 +1,7 @@
 # “Costume de Casa Vai à Praça”: A Reprodução de Estereótipos e do Sexismo no Cotidiano Familiar
 
+[Página WEB](https://nicacioliveira.github.io/educacao-intrafamiliar/)
+
 Este repositório contém todos os dados, scripts e artefactos gerados para o Trabalho de Conclusão de Curso (TCC) de Heloisa Diniz Ferreira, apresentado ao curso de Graduação em Psicologia da Universidade Federal de Campina Grande (UFCG).
 
 O objetivo da pesquisa foi analisar os sentidos atribuídos por mulheres às experiências de preterição e desigualdade de género vividas na infância e adolescência no ambiente familiar, utilizando uma abordagem híbrida que combina análise de conteúdo qualitativa com técnicas de processamento de linguagem natural.
